@@ -1,8 +1,48 @@
+class MastercardService
+  def self.charge(amount)
+  end
+end
+
+class AmexService
+  def self.charge(amount)
+  end
+end
+
+class VisaService
+  def self.charge(amount)
+  end
+end
+
+class DiscoverService
+  def self.charge(amount)
+  end
+end
+
+class BatchBilling
+  def self.enqueue(receipt)
+  end
+end
+
 class CardType
   attr_accessor :card_number
 
   def initialize(card_number)
     @card_number = card_number.to_s
+  end
+
+  def charge(amount)
+    case
+      when american_express?
+        receipt = AmexService.charge(amount)
+        BatchBilling.enqueue(receipt)
+      when mastercard?
+        MastercardService.charge(amount)
+      when visa?
+        VisaService.charge(amount)
+      when discover?
+        receipt = DiscoverService.charge(amount)
+        BatchBilling.enqueue(receipt)
+    end
   end
 
   def name
