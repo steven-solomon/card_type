@@ -46,8 +46,3 @@ class CardType
       card_number[0].to_i == 4
   end
 end
-
-class AmericanExpress
-  def name
-  end
-end
