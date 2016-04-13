@@ -1,29 +1,19 @@
-class CardType
-  attr_accessor :card_number
+class CardFactory
+  card_types = [AmericanExpress, Discover, Mastercard, Visa]
 
-  def initialize(card_number)
+  def self.make_card(card_number)
     @card_number = card_number.to_s
     if AmericanExpress.is_type?(@card_number)
-        @card = AmericanExpress.new
+      AmericanExpress.new
     elsif Discover.is_type?(@card_number)
-        @card = Discover.new
+      Discover.new
     elsif Mastercard.is_type?(@card_number)
-        @card = Mastercard.new
+      Mastercard.new
     elsif Visa.is_type?(@card_number)
-        @card = Visa.new
+      Visa.new
     else
-        @card = InvalidCard.new
+      InvalidCard.new
     end
-  end
-
-  def name
-    @card.name
-  end
-
-  private
-
-  def card_num_length
-    @card_num_length ||= card_number.to_s.size
   end
 end
 
