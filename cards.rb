@@ -2,18 +2,9 @@ class CardFactory
   card_types = [AmericanExpress, Discover, Mastercard, Visa]
 
   def self.make_card(card_number)
-    @card_number = card_number.to_s
-    if AmericanExpress.is_type?(@card_number)
-      AmericanExpress.new
-    elsif Discover.is_type?(@card_number)
-      Discover.new
-    elsif Mastercard.is_type?(@card_number)
-      Mastercard.new
-    elsif Visa.is_type?(@card_number)
-      Visa.new
-    else
-      InvalidCard.new
-    end
+    card_type = card_types.detect { |card_type| card_type.is_type(card_number) }
+    card_type = InvalidCard unless card_type
+    card_type.new(card_number)
   end
 end
 
@@ -64,9 +55,5 @@ end
 class UnknownCard
   def name
     'Unknown'
-  end
-
-  def self.is_type?(card_number)
-    false
   end
 end
