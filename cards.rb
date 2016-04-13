@@ -8,15 +8,15 @@ class CardType
   def name
     case
       when american_express?
-        "AMEX"
+        AmericanExpress.new.name
       when discover?
-        'Discover'
+        Discover.new.name
       when mastercard?
-        'Mastercard'
+        Mastercard.new.name
       when visa?
-        'VISA'
+        Visa.new.name
       else
-        'Unknown'
+        InvalidCard.new.name
     end
   end
 
@@ -49,5 +49,30 @@ end
 
 class AmericanExpress
   def name
+    "AMEX"
+  end
+end
+
+class Discover
+  def name
+    "Discover"
+  end
+end
+
+class Mastercard
+  def name
+    'Mastercard'
+  end
+end
+
+class Visa
+  def name
+    'VISA'
+  end
+end
+
+class UnknownCard
+  def name
+    'Unknown'
   end
 end
