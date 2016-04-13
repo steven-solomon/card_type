@@ -3,16 +3,15 @@ class CardType
 
   def initialize(card_number)
     @card_number = card_number.to_s
-    case
-      when american_express?
+    if AmericanExpress.is_type?(@card_number)
         @card = AmericanExpress.new
-      when discover?
+    elsif Discover.is_type?(@card_number)
         @card = Discover.new
-      when mastercard?
+    elsif Mastercard.is_type?(@card_number)
         @card = Mastercard.new
-      when visa?
+    elsif Visa.is_type?(@card_number)
         @card = Visa.new
-      else
+    else
         @card = InvalidCard.new
     end
   end
@@ -25,22 +24,6 @@ class CardType
 
   def card_num_length
     @card_num_length ||= card_number.to_s.size
-  end
-
-  def american_express?
-    AmericanExpress.is_type @card_number
-  end
-
-  def discover?
-    Discover.is_type @card_number
-  end
-
-  def mastercard?
-    Mastercard.is_type @card_number
-  end
-
-  def visa?
-    Visa.is_type @card_number
   end
 end
 
