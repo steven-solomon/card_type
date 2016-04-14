@@ -13,13 +13,13 @@ describe 'CardType' do
       it 'does NOT call any services' do
         amount = 10.00
         expect(AmexService)
-          .to_not receive(:charge)
+          .to_not receive(:hold)
                 .with(amount)
         expect(VisaService)
           .to_not receive(:charge)
                 .with(amount)
         expect(DiscoverService)
-          .to_not receive(:charge)
+          .to_not receive(:hold)
                 .with(amount)
         expect(MastercardService)
           .to_not receive(:charge)
@@ -44,10 +44,10 @@ describe 'CardType' do
         receipt = double(:receipt)
         amount = 10.00
         expect(AmexService)
-          .to receive(:charge)
+          .to receive(:hold)
                 .with(amount)
                 .and_return(receipt)
-                
+
         expect(BatchBilling)
           .to receive(:enqueue)
                 .with(receipt)
@@ -84,7 +84,7 @@ describe 'CardType' do
         amount = 10.00
         receipt = double(:receipt)
         expect(DiscoverService)
-          .to receive(:charge)
+          .to receive(:hold)
                 .with(amount)
                 .and_return(receipt)
 

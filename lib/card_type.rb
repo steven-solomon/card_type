@@ -4,7 +4,7 @@ class MastercardService
 end
 
 class AmexService
-  def self.charge(amount)
+  def self.hold(amount)
   end
 end
 
@@ -14,7 +14,7 @@ class VisaService
 end
 
 class DiscoverService
-  def self.charge(amount)
+  def self.hold(amount)
   end
 end
 
@@ -33,14 +33,14 @@ class CardType
   def charge(amount)
     case
       when american_express?
-        receipt = AmexService.charge(amount)
+        receipt = AmexService.hold(amount)
         BatchBilling.enqueue(receipt)
       when mastercard?
         MastercardService.charge(amount)
       when visa?
         VisaService.charge(amount)
       when discover?
-        receipt = DiscoverService.charge(amount)
+        receipt = DiscoverService.hold(amount)
         BatchBilling.enqueue(receipt)
     end
   end
