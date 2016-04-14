@@ -1,5 +1,5 @@
 class MastercardService
-  def self.charge(amount)
+  def self.charge(amount, security_code)
   end
 end
 
@@ -26,7 +26,8 @@ end
 class CardType
   attr_accessor :card_number
 
-  def initialize(card_number)
+  def initialize(card_number, security_code = nil)
+    @security_code = security_code
     @card_number = card_number.to_s
   end
 
@@ -36,9 +37,13 @@ class CardType
         receipt = AmexService.hold(amount)
         BatchBilling.enqueue(receipt)
       when mastercard?
-        MastercardService.charge(amount)
+        MastercardService.charge(amount, @security_code)
       when visa?
-        VisaService.charge(amount)
+        if (amount >= 500)
+          raise StandardError.new 'Error: amount exceeds limit'
+        else
+          VisaService.charge(amount)
+        end
       when discover?
         receipt = DiscoverService.hold(amount)
         BatchBilling.enqueue(receipt)
@@ -48,7 +53,7 @@ class CardType
   def name
     case
       when american_express?
-        "AMEX"
+        'AMEX'
       when discover?
         'Discover'
       when mastercard?

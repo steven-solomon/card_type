@@ -23,7 +23,7 @@ describe 'CardType' do
                 .with(amount)
         expect(MastercardService)
           .to_not receive(:charge)
-                .with(amount)
+                .with(amount, nil)
 
         subject.charge(amount)
       end
@@ -63,12 +63,36 @@ describe 'CardType' do
     end
 
     describe '#charge' do
-      it 'calls Visa service' do
-        amount = 10.00
-        expect(VisaService)
-          .to receive(:charge)
-                .with(amount)
-        subject.charge(amount)
+      context 'when amount is less than upper bound' do
+        it 'calls Visa service' do
+          amount = 10.00
+          expect(VisaService)
+            .to receive(:charge)
+                  .with(amount)
+          subject.charge(amount)
+        end
+
+        it 'calls Visa service' do
+          amount = 499.00
+          expect(VisaService)
+            .to receive(:charge)
+                  .with(amount)
+          subject.charge(amount)
+        end
+      end
+
+      context 'when amount is greater than upper bound' do
+        it 'throws an exception' do
+          amount = 500.00
+
+          expect { subject.charge(amount) }.to raise_error('Error: amount exceeds limit')
+        end
+
+        it 'throws an exception' do
+          amount = 501.00
+
+          expect { subject.charge(amount) }.to raise_error('Error: amount exceeds limit')
+        end
       end
     end
   end
@@ -98,7 +122,8 @@ describe 'CardType' do
   end
 
   context 'mastercard' do
-    subject {CardType.new(5555555555554444)}
+    let(:security_code) { 956 }
+    subject {CardType.new(5555555555554444, 956)}
 
     it 'populates name' do
       expect(subject.name).to eq('Mastercard')
@@ -106,7 +131,11 @@ describe 'CardType' do
 
     describe '#charge' do
       it 'calls mastercard service' do
-
+        amount = 10.00
+        expect(MastercardService)
+          .to receive(:charge)
+                .with(amount, security_code)
+        subject.charge(amount)
       end
     end
   end
