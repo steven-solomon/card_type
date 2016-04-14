@@ -1,21 +1,26 @@
+# TODO: Pass card number with refund and charge operations
+# Add another object that cares what the card type is and uses the name to
+# determine it's operations
+# Maybe logging as well
+
 class MastercardService
-  def self.charge(amount, security_code)
+  def self.charge(card_number, amount, security_code)
   end
 
-  def self.refund(amount, security_code, return_date)
+  def self.refund(card_number, amount, security_code, return_date)
   end
 end
 
 class AmexService
-  def self.hold(amount)
+  def self.hold(card_number, amount)
   end
 
-  def self.refund(amount)
+  def self.refund(card_number, amount)
   end
 end
 
 class VisaService
-  def self.charge(amount)
+  def self.charge(card_number, amount)
   end
 
   def self.refund(receipt)
@@ -23,7 +28,7 @@ class VisaService
 end
 
 class DiscoverService
-  def self.hold(amount)
+  def self.hold(card_number, amount)
   end
 end
 
@@ -37,24 +42,24 @@ class CardType
 
   def initialize(card_number, security_code = nil, current_date = nil)
     @security_code = security_code
-    @card_number = card_number.to_s
+    @card_number = card_number
   end
 
   def charge(amount)
     case
       when american_express?
-        receipt = AmexService.hold(amount)
+        receipt = AmexService.hold(@card_number, amount)
         BatchBilling.enqueue(receipt)
       when mastercard?
-        MastercardService.charge(amount, @security_code)
+        MastercardService.charge(@card_number, amount, @security_code)
       when visa?
         if (amount >= 500)
           raise StandardError.new 'Error: amount exceeds limit'
         else
-          VisaService.charge(amount)
+          VisaService.charge(@card_number, amount)
         end
       when discover?
-        receipt = DiscoverService.hold(amount)
+        receipt = DiscoverService.hold(@card_number, amount)
         BatchBilling.enqueue(receipt)
     end
   end
@@ -77,14 +82,14 @@ class CardType
   def return(receipt)
     case
       when american_express?
-        AmexService.refund(receipt.amount)
+        AmexService.refund(@card_number, receipt.amount)
       when visa?
         response = VisaService.refund(receipt)
         raise 'Error: return not valid' unless response.success
       when discover?
         raise 'Error: returns not valid for Discover'
       when mastercard?
-        MastercardService.refund(receipt.amount, @security_code, receipt.date)
+        MastercardService.refund(@card_number, receipt.amount, @security_code, receipt.date)
     end
   end
 

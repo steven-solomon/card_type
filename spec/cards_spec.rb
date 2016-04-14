@@ -4,7 +4,8 @@ require 'date'
 
 describe 'CardType' do
   context 'unknown card' do
-    subject { CardType.new(1111111111111111) }
+    let(:card_number) { '1111111111111111' }
+    subject { CardType.new(card_number) }
 
     it 'populates name' do
       expect(subject.name).to eq('Unknown')
@@ -15,16 +16,16 @@ describe 'CardType' do
         amount = 10.00
         expect(AmexService)
           .to_not receive(:hold)
-                .with(amount)
+                .with(card_number, amount)
         expect(VisaService)
           .to_not receive(:charge)
-                .with(amount)
+                .with(card_number, amount)
         expect(DiscoverService)
           .to_not receive(:hold)
-                .with(amount)
+                .with(card_number, amount)
         expect(MastercardService)
           .to_not receive(:charge)
-                .with(amount, nil)
+                .with(card_number, amount, nil)
 
         subject.charge(amount)
       end
@@ -32,8 +33,9 @@ describe 'CardType' do
   end
 
   context 'amex card' do
+    let(:card_number) { '378282246310005' }
     subject {
-      CardType.new(378282246310005)
+      CardType.new(card_number)
     }
 
     it 'populates name' do
@@ -46,7 +48,7 @@ describe 'CardType' do
         amount = 10.00
         expect(AmexService)
           .to receive(:hold)
-                .with(amount)
+                .with(card_number, amount)
                 .and_return(receipt)
 
         expect(BatchBilling)
@@ -61,7 +63,7 @@ describe 'CardType' do
         amount = 20.00
         expect(AmexService)
           .to receive(:refund)
-                .with(amount)
+                .with(card_number, amount)
 
         subject.return(double(:receipt, amount: amount))
       end
@@ -69,7 +71,8 @@ describe 'CardType' do
   end
 
   context 'visa card' do
-    subject { CardType.new(4111111111111111) }
+    let(:card_number) { '4111111111111111' }
+    subject { CardType.new(card_number) }
     it 'populates name' do
       expect(subject.name).to eq('VISA')
     end
@@ -80,7 +83,7 @@ describe 'CardType' do
           amount = 10.00
           expect(VisaService)
             .to receive(:charge)
-                  .with(amount)
+                  .with(card_number, amount)
           subject.charge(amount)
         end
 
@@ -88,7 +91,7 @@ describe 'CardType' do
           amount = 499.00
           expect(VisaService)
             .to receive(:charge)
-                  .with(amount)
+                  .with(card_number, amount)
           subject.charge(amount)
         end
       end
@@ -137,7 +140,8 @@ describe 'CardType' do
   end
 
   context 'discover card' do
-    subject {CardType.new(6011111111111117)}
+    let(:card_number) { '6011111111111117' }
+    subject {CardType.new(card_number)}
     it 'populates name' do
       expect(subject.name).to eq('Discover')
     end
@@ -148,7 +152,7 @@ describe 'CardType' do
         receipt = double(:receipt)
         expect(DiscoverService)
           .to receive(:hold)
-                .with(amount)
+                .with(card_number, amount)
                 .and_return(receipt)
 
         expect(BatchBilling)
@@ -170,7 +174,8 @@ describe 'CardType' do
   context 'mastercard' do
     let(:security_code) { 956 }
     let(:current_date) { DateTime.new(2015, 01, 01) }
-    subject {CardType.new(5555555555554444, 956, current_date)}
+    let(:card_number) { '5555555555554444' }
+    subject {CardType.new(card_number, 956, current_date)}
 
     it 'populates name' do
       expect(subject.name).to eq('Mastercard')
@@ -181,7 +186,7 @@ describe 'CardType' do
         amount = 10.00
         expect(MastercardService)
           .to receive(:charge)
-                .with(amount, security_code)
+                .with(card_number, amount, security_code)
         subject.charge(amount)
       end
     end
@@ -195,7 +200,7 @@ describe 'CardType' do
           receipt = double(:receipt, amount: amount, date: receipt_date)
           expect(MastercardService)
             .to receive(:refund)
-                  .with(amount, security_code, receipt_date)
+                  .with(card_number, amount, security_code, receipt_date)
 
           subject.return(receipt)
         end
@@ -204,7 +209,6 @@ describe 'CardType' do
       context 'when return is outside of 14 days' do
         let(:receipt_date) { DateTime.new(2015, 01, 15) }
       end
-
     end
   end
 end
