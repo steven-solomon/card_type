@@ -1,15 +1,24 @@
 class MastercardService
   def self.charge(amount, security_code)
   end
+
+  def self.refund(amount, security_code, return_date)
+  end
 end
 
 class AmexService
   def self.hold(amount)
   end
+
+  def self.refund(amount)
+  end
 end
 
 class VisaService
   def self.charge(amount)
+  end
+
+  def self.refund(receipt)
   end
 end
 
@@ -26,7 +35,7 @@ end
 class CardType
   attr_accessor :card_number
 
-  def initialize(card_number, security_code = nil)
+  def initialize(card_number, security_code = nil, current_date = nil)
     @security_code = security_code
     @card_number = card_number.to_s
   end
@@ -62,6 +71,20 @@ class CardType
         'VISA'
       else
         'Unknown'
+    end
+  end
+
+  def return(receipt)
+    case
+      when american_express?
+        AmexService.refund(receipt.amount)
+      when visa?
+        response = VisaService.refund(receipt)
+        raise 'Error: return not valid' unless response.success
+      when discover?
+        raise 'Error: returns not valid for Discover'
+      when mastercard?
+        MastercardService.refund(receipt.amount, @security_code, receipt.date)
     end
   end
 

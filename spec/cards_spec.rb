@@ -1,5 +1,6 @@
 require 'rspec'
 require 'card_type'
+require 'date'
 
 describe 'CardType' do
   context 'unknown card' do
@@ -54,6 +55,17 @@ describe 'CardType' do
         subject.charge(amount)
       end
     end
+
+    describe '#return' do
+      it 'calls refund on amex service' do
+        amount = 20.00
+        expect(AmexService)
+          .to receive(:refund)
+                .with(amount)
+
+        subject.return(double(:receipt, amount: amount))
+      end
+    end
   end
 
   context 'visa card' do
@@ -95,6 +107,33 @@ describe 'CardType' do
         end
       end
     end
+
+    describe '#return' do
+      context 'when refund succeeds' do
+        it 'calls refund on visa service' do
+          receipt = double(:receipt, amount: 20.00)
+          expect(VisaService)
+            .to receive(:refund)
+                  .with(receipt)
+                  .and_return(double(:response, success: true))
+
+          subject.return(receipt)
+        end
+      end
+
+      context 'when refund fails' do
+        it 'calls refund on visa service' do
+          receipt = double(:receipt, amount: 20.00)
+          expect(VisaService)
+            .to receive(:refund)
+                  .with(receipt)
+                  .and_return(double(:response, success: false))
+
+          expect { subject.return(receipt) }
+            .to raise_error('Error: return not valid')
+        end
+      end
+    end
   end
 
   context 'discover card' do
@@ -119,11 +158,19 @@ describe 'CardType' do
         subject.charge(amount)
       end
     end
+
+    describe '#return' do
+      it 'raise error' do
+        receipt = double(:receipt)
+        expect { subject.return(receipt) }.to raise_error('Error: returns not valid for Discover')
+      end
+    end
   end
 
   context 'mastercard' do
     let(:security_code) { 956 }
-    subject {CardType.new(5555555555554444, 956)}
+    let(:current_date) { DateTime.new(2015, 01, 01) }
+    subject {CardType.new(5555555555554444, 956, current_date)}
 
     it 'populates name' do
       expect(subject.name).to eq('Mastercard')
@@ -137,6 +184,27 @@ describe 'CardType' do
                 .with(amount, security_code)
         subject.charge(amount)
       end
+    end
+
+    describe  '#return' do
+      context 'when return is within 14 days' do
+        let(:receipt_date) { DateTime.new(2015, 01, 02) }
+
+        it 'calls mastercard service' do
+          amount = 10.00
+          receipt = double(:receipt, amount: amount, date: receipt_date)
+          expect(MastercardService)
+            .to receive(:refund)
+                  .with(amount, security_code, receipt_date)
+
+          subject.return(receipt)
+        end
+      end
+
+      context 'when return is outside of 14 days' do
+        let(:receipt_date) { DateTime.new(2015, 01, 15) }
+      end
+
     end
   end
 end
