@@ -21,7 +21,7 @@ class CardType
       when mastercard?
         @card = Mastercard.new
       when visa?
-        @card = Visa.new
+        @card = Visa.new(card_number)
       else
         @card = UnknownCard.new
     end
@@ -34,11 +34,7 @@ class CardType
       when mastercard?
         MastercardService.charge(@card_number, amount, @security_code)
       when visa?
-        if (amount >= 500)
-          raise StandardError.new 'Error: amount exceeds limit'
-        else
-          VisaService.charge(@card_number, amount)
-        end
+        @card.charge(amount)
       when discover?
         receipt = DiscoverService.hold(@card_number, amount)
         BatchBilling.enqueue(receipt)
