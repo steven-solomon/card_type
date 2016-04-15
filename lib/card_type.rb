@@ -30,8 +30,7 @@ class CardType
   def charge(amount)
     case
       when american_express?
-        receipt = AmexService.hold(@card_number, amount)
-        BatchBilling.enqueue(receipt)
+        @card.charge(amount)
       when mastercard?
         MastercardService.charge(@card_number, amount, @security_code)
       when visa?
