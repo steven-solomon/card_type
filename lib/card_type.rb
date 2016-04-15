@@ -19,7 +19,7 @@ class CardType
       when discover?
         @card = Discover.new(card_number)
       when mastercard?
-        @card = Mastercard.new
+        @card = Mastercard.new(card_number, security_code, current_date)
       when visa?
         @card = Visa.new(card_number)
       else
@@ -32,7 +32,7 @@ class CardType
       when american_express?
         @card.charge(amount)
       when mastercard?
-        MastercardService.charge(@card_number, amount, @security_code)
+        @card.charge(amount)
       when visa?
         @card.charge(amount)
       when discover?
