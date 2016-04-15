@@ -15,7 +15,7 @@ class CardType
     @card_number = card_number
     case
       when american_express?
-        @card = Amex.new
+        @card = Amex.new(card_number)
       when discover?
         @card = Discover.new
       when mastercard?
