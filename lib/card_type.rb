@@ -1,45 +1,10 @@
-# TODO: Pass card number with refund and charge operations
-# Add another object that cares what the card type is and uses the name to
-# determine it's operations
-# Maybe logging as well
-
-class MastercardService
-  def self.charge(card_number, amount, security_code)
-  end
-
-  def self.refund(card_number, amount, security_code, return_date)
-  end
-end
-
-class AmexService
-  def self.hold(card_number, amount)
-  end
-
-  def self.refund(card_number, amount)
-  end
-end
-
-class VisaService
-  def self.charge(card_number, amount)
-  end
-
-  def self.refund(receipt)
-  end
-end
-
-class DiscoverService
-  def self.hold(card_number, amount)
-  end
-end
-
-class BatchBilling
-  def self.enqueue(receipt)
-  end
-end
+require 'services/mastercard_service'
+require 'services/amex_service'
+require 'services/visa_service'
+require 'services/discover_service'
+require 'batch/batch_billing'
 
 class CardType
-  attr_accessor :card_number
-
   def initialize(card_number, security_code = nil, current_date = nil)
     @security_code = security_code
     @card_number = card_number
@@ -94,6 +59,8 @@ class CardType
   end
 
   private
+
+  attr_accessor :card_number
 
   def card_num_length
     @card_num_length ||= card_number.to_s.size
