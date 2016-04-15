@@ -3,6 +3,11 @@ require 'services/amex_service'
 require 'services/visa_service'
 require 'services/discover_service'
 require 'batch/batch_billing'
+require 'amex'
+require 'visa'
+require 'mastercard'
+require 'discover'
+require 'unknown_card'
 
 class CardType
   def initialize(card_number, security_code = nil, current_date = nil)
@@ -32,15 +37,15 @@ class CardType
   def name
     case
       when american_express?
-        'AMEX'
+        Amex.new.name
       when discover?
-        'Discover'
+        Discover.new.name
       when mastercard?
-        'Mastercard'
+        Mastercard.new.name
       when visa?
-        'VISA'
+        Visa.new.name
       else
-        'Unknown'
+        UnknownCard.new.name
     end
   end
 
