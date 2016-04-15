@@ -13,6 +13,18 @@ class CardType
   def initialize(card_number, security_code = nil, current_date = nil)
     @security_code = security_code
     @card_number = card_number
+    case
+      when american_express?
+        @card = Amex.new
+      when discover?
+        @card = Discover.new
+      when mastercard?
+        @card = Mastercard.new
+      when visa?
+        @card = Visa.new
+      else
+        @card = UnknownCard.new
+    end
   end
 
   def charge(amount)
@@ -35,18 +47,7 @@ class CardType
   end
 
   def name
-    case
-      when american_express?
-        Amex.new.name
-      when discover?
-        Discover.new.name
-      when mastercard?
-        Mastercard.new.name
-      when visa?
-        Visa.new.name
-      else
-        UnknownCard.new.name
-    end
+    @card.name
   end
 
   def return(receipt)
