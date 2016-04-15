@@ -17,7 +17,7 @@ class CardType
       when american_express?
         @card = Amex.new(card_number)
       when discover?
-        @card = Discover.new
+        @card = Discover.new(card_number)
       when mastercard?
         @card = Mastercard.new
       when visa?
@@ -36,8 +36,7 @@ class CardType
       when visa?
         @card.charge(amount)
       when discover?
-        receipt = DiscoverService.hold(@card_number, amount)
-        BatchBilling.enqueue(receipt)
+        @card.charge(amount)
     end
   end
 
