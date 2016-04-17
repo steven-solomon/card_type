@@ -4,6 +4,11 @@ class Mastercard
     @security_code = security_code
   end
 
+  def self.is_card?(card_number)
+    card_number.length == 16 &&
+      ([*51..55].include? card_number[0..1].to_i)
+  end
+
   def name
     'Mastercard'
   end

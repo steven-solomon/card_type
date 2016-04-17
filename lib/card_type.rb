@@ -18,7 +18,7 @@ class CardType
         @card = Amex.new(card_number)
       when Discover.is_card?(card_number)
         @card = Discover.new(card_number)
-      when mastercard?
+      when Mastercard.is_card?(card_number)
         @card = Mastercard.new(card_number, security_code, current_date)
       when visa?
         @card = Visa.new(card_number)
@@ -45,11 +45,6 @@ class CardType
 
   def card_num_length
     @card_num_length ||= card_number.to_s.size
-  end
-
-  def mastercard?
-    card_num_length == 16 &&
-      ([*51..55].include? card_number[0..1].to_i)
   end
 
   def visa?
