@@ -14,4 +14,9 @@ class Visa
       VisaService.charge(@card_number, amount)
     end
   end
+
+  def return(receipt)
+    response = VisaService.refund(receipt)
+    raise 'Error: return not valid' unless response.success
+  end
 end

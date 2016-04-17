@@ -40,8 +40,7 @@ class CardType
       when american_express?
         @card.return(receipt)
       when visa?
-        response = VisaService.refund(receipt)
-        raise 'Error: return not valid' unless response.success
+        @card.return(receipt)
       when discover?
         raise 'Error: returns not valid for Discover'
       when mastercard?

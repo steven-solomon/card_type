@@ -109,34 +109,7 @@ describe 'CardType' do
           expect { subject.charge(amount) }.to raise_error('Error: amount exceeds limit')
         end
       end
-    end
-
-    describe '#return' do
-      context 'when refund succeeds' do
-        it 'calls refund on visa service' do
-          receipt = double(:receipt, amount: 20.00)
-          expect(VisaService)
-            .to receive(:refund)
-                  .with(receipt)
-                  .and_return(double(:response, success: true))
-
-          subject.return(receipt)
-        end
-      end
-
-      context 'when refund fails' do
-        it 'calls refund on visa service' do
-          receipt = double(:receipt, amount: 20.00)
-          expect(VisaService)
-            .to receive(:refund)
-                  .with(receipt)
-                  .and_return(double(:response, success: false))
-
-          expect { subject.return(receipt) }
-            .to raise_error('Error: return not valid')
-        end
-      end
-    end
+    end    
   end
 
   context 'discover card' do
