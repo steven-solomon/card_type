@@ -44,7 +44,7 @@ class CardType
       when discover?
         @card.return(receipt)
       when mastercard?
-        MastercardService.refund(@card_number, receipt.amount, @security_code, receipt.date)
+        @card.return(receipt)
     end
   end
 

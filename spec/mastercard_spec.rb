@@ -21,4 +21,24 @@ describe 'Mastercard' do
       subject.charge(amount)
     end
   end
+
+  describe  '#return' do
+    context 'when return is within 14 days' do
+      let(:receipt_date) { DateTime.new(2015, 01, 02) }
+
+      it 'calls mastercard service' do
+        amount = 10.00
+        receipt = double(:receipt, amount: amount, date: receipt_date)
+        expect(MastercardService)
+          .to receive(:refund)
+                .with(card_number, amount, security_code, receipt_date)
+
+        subject.return(receipt)
+      end
+    end
+
+    context 'when return is outside of 14 days' do
+      let(:receipt_date) { DateTime.new(2015, 01, 15) }
+    end
+  end
 end
