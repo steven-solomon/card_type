@@ -28,16 +28,7 @@ class CardType
   end
 
   def charge(amount)
-    case
-      when american_express?
-        @card.charge(amount)
-      when mastercard?
-        @card.charge(amount)
-      when visa?
-        @card.charge(amount)
-      when discover?
-        @card.charge(amount)
-    end
+    @card.charge(amount)
   end
 
   def name
