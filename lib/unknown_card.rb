@@ -5,4 +5,7 @@ class UnknownCard
 
   def charge(amount)
   end
+
+  def return(receipt)
+  end
 end

@@ -27,4 +27,10 @@ describe 'UnknownCard' do
       subject.charge(amount)
     end
   end
+
+  describe '#return' do
+    it 'responds to return' do
+      expect(subject).to respond_to(:return)
+    end
+  end
 end

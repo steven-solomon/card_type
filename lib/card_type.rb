@@ -36,16 +36,7 @@ class CardType
   end
 
   def return(receipt)
-    case
-      when american_express?
-        @card.return(receipt)
-      when visa?
-        @card.return(receipt)
-      when discover?
-        @card.return(receipt)
-      when mastercard?
-        @card.return(receipt)
-    end
+    @card.return(receipt)
   end
 
   private
