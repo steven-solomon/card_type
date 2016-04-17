@@ -14,7 +14,7 @@ class CardType
     @security_code = security_code
     @card_number = card_number
     case
-      when american_express?
+      when Amex.is_card?(card_number)
         @card = Amex.new(card_number)
       when discover?
         @card = Discover.new(card_number)
@@ -45,11 +45,6 @@ class CardType
 
   def card_num_length
     @card_num_length ||= card_number.to_s.size
-  end
-
-  def american_express?
-    card_num_length == 15 &&
-      ([*34..37].include? card_number[0..1].to_i)
   end
 
   def discover?
