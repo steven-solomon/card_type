@@ -3,6 +3,11 @@ class Amex
     @card_number = card_number
   end
 
+  def self.is_card?(card_number)
+    card_number.length == 15 &&
+      ([*34..37].include? card_number[0..1].to_i)
+  end
+
   def name
     'AMEX'
   end
