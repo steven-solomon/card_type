@@ -10,6 +10,21 @@ require 'discover'
 require 'unknown_card'
 
 class CardType
+  def self.make(card_number, security_code = nil, current_date = nil)
+    case
+      when Amex.is_card?(card_number)
+        Amex.new(card_number)
+      when Discover.is_card?(card_number)
+        Discover.new(card_number)
+      when Visa.is_card?(card_number)
+        Visa.new(card_number)
+      when Mastercard.is_card?(card_number)
+        Mastercard.new(card_number, security_code, current_date)
+      else
+        UnknownCard.new
+    end
+  end
+
   def initialize(card_number, security_code = nil, current_date = nil)
     @security_code = security_code
     @card_number = card_number
