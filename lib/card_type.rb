@@ -42,7 +42,7 @@ class CardType
       when visa?
         @card.return(receipt)
       when discover?
-        raise 'Error: returns not valid for Discover'
+        @card.return(receipt)
       when mastercard?
         MastercardService.refund(@card_number, receipt.amount, @security_code, receipt.date)
     end

@@ -26,4 +26,11 @@ describe 'Discover' do
       subject.charge(amount)
     end
   end
+
+  describe '#return' do
+    it 'raise error' do
+      receipt = double(:receipt)
+      expect { subject.return(receipt) }.to raise_error('Error: returns not valid for Discover')
+    end
+  end
 end

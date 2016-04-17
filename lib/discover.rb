@@ -11,4 +11,8 @@ class Discover
     receipt = DiscoverService.hold(@card_number, amount)
     BatchBilling.enqueue(receipt)
   end
+
+  def return(receipt)
+    raise 'Error: returns not valid for Discover'
+  end
 end
