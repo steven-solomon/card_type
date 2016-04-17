@@ -38,12 +38,4 @@ class CardType
   def return(receipt)
     @card.return(receipt)
   end
-
-  private
-
-  attr_accessor :card_number
-
-  def card_num_length
-    @card_num_length ||= card_number.to_s.size
-  end
 end
