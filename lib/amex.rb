@@ -11,4 +11,8 @@ class Amex
     receipt = AmexService.hold(@card_number, amount)
     BatchBilling.enqueue(receipt)
   end
+
+  def return(receipt)
+    AmexService.refund(@card_number, receipt.amount)
+  end
 end

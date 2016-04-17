@@ -25,4 +25,15 @@ describe 'Amex' do
       subject.charge(amount)
     end
   end
+
+  describe '#return' do
+    it 'calls refund on amex service' do
+      amount = 20.00
+      expect(AmexService)
+        .to receive(:refund)
+              .with(card_number, amount)
+
+      subject.return(double(:receipt, amount: amount))
+    end
+  end
 end

@@ -38,7 +38,7 @@ class CardType
   def return(receipt)
     case
       when american_express?
-        AmexService.refund(@card_number, receipt.amount)
+        @card.return(receipt)
       when visa?
         response = VisaService.refund(receipt)
         raise 'Error: return not valid' unless response.success
