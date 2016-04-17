@@ -20,7 +20,7 @@ class CardType
         @card = Discover.new(card_number)
       when Mastercard.is_card?(card_number)
         @card = Mastercard.new(card_number, security_code, current_date)
-      when visa?
+      when Visa.is_card?(card_number)
         @card = Visa.new(card_number)
       else
         @card = UnknownCard.new
@@ -45,10 +45,5 @@ class CardType
 
   def card_num_length
     @card_num_length ||= card_number.to_s.size
-  end
-
-  def visa?
-    (card_num_length == 15 || card_num_length) &&
-      card_number[0].to_i == 4
   end
 end
