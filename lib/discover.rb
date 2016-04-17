@@ -3,6 +3,10 @@ class Discover
     @card_number = card_number
   end
 
+  def self.is_card?(card_number)
+    card_number.length == 16 && card_number[0..3].to_i == 6011
+  end
+
   def name
     'Discover'
   end
